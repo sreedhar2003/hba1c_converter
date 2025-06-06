@@ -28,12 +28,12 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
           surfaceTintColor: AppColors.white,
           leading: IconButton(
             onPressed: () {
-              // Navigator.pop(context);
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HbA1cConverterScreen1(),
-                  ));
+              Navigator.pop(context);
+              // Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => const HbA1cConverterScreen1(),
+              //     ));
             },
             icon: const Icon(
               Icons.arrow_back_ios_new,
@@ -123,6 +123,10 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
                                     borderRadius: BorderRadius.circular(25),
                                     borderSide: const BorderSide(
                                         color: AppColors.titlecolor, width: 1)),
+                                errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.red, width: 1)),
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
@@ -154,7 +158,7 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
                               subject: "Convert",
                               ontap: () {
                                 if (provider.formKey.currentState!.validate()) {
-                                  Navigator.push(
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
