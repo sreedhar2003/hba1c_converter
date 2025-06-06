@@ -4,6 +4,8 @@ import 'package:hba1c_converter/helpers/appcolors.dart';
 import 'package:hba1c_converter/helpers/screen_config.dart';
 import 'package:hba1c_converter/helpers/size_extensions.dart';
 import 'package:hba1c_converter/helpers/sizedbox.dart';
+import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/screens/hba1c_converter_screen2.dart';
+import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/widgets/buttons.dart';
 
 class HbA1cConverterScreen1 extends StatefulWidget {
   const HbA1cConverterScreen1({super.key});
@@ -56,7 +58,7 @@ class _HbA1cConverterScreen1State extends State<HbA1cConverterScreen1> {
             ),
             sizedBoxWithHeight(40),
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppColors.containercolor,
                 border: Border.all(
@@ -94,31 +96,16 @@ class _HbA1cConverterScreen1State extends State<HbA1cConverterScreen1> {
                     fit: BoxFit.cover,
                   ),
                   sizedBoxWithHeight(10),
-                  Container(
-                    height: 48,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(82),
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.headingcolor,
-                          AppColors.titlecolor,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Enter My HbA1c Value",
-                        style: GoogleFonts.roboto(
-                          color: AppColors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  )
+                  Buttons(
+                      subject: "Enter My HbA1c Value",
+                      ontap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const HbA1cConverterScreen2(),
+                            ));
+                      })
                 ],
               ),
             )

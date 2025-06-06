@@ -5,6 +5,9 @@ import 'package:hba1c_converter/helpers/screen_config.dart';
 import 'package:hba1c_converter/helpers/size_extensions.dart';
 import 'package:hba1c_converter/helpers/sizedbox.dart';
 import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/controller/hba1c_converter_controller.dart';
+import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/screens/hba1c_converter_screen1.dart';
+import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/screens/hba1c_converter_screen3.dart';
+import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 
 class HbA1cConverterScreen2 extends StatefulWidget {
@@ -24,7 +27,14 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
           backgroundColor: AppColors.white,
           surfaceTintColor: AppColors.white,
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // Navigator.pop(context);
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HbA1cConverterScreen1(),
+                  ));
+            },
             icon: const Icon(
               Icons.arrow_back_ios_new,
               size: 20,
@@ -42,80 +52,127 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Center(
-              child: Text(
-                "HbA1c Converter",
-                style: GoogleFonts.roboto(
-                  color: AppColors.titlecolor,
-                  fontSize: 30.sp,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            sizedBoxWithHeight(40),
-            Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.containercolor,
-                border: Border.all(
-                  color: AppColors.titlecolor,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "Enter Your HbA1c",
-                    maxLines: 2,
-                    style: GoogleFonts.roboto(
-                      color: AppColors.headingcolor,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                  Center(
+                    child: Text(
+                      "HbA1c Converter",
+                      style: GoogleFonts.roboto(
+                        color: AppColors.titlecolor,
+                        fontSize: 30.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
-                  sizedBoxWithHeight(10),
-                  Text(
-                    "Enter your HbA1c (%)",
-                    style: GoogleFonts.roboto(
-                      color: AppColors.black,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  sizedBoxWithHeight(10),
+                  sizedBoxWithHeight(40),
                   Container(
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(15),
-                          bottomLeft: Radius.circular(15)),
-                      image: DecorationImage(
-                        image: AssetImage('Assets/Images/backgroud.jpg'),
-                        fit: BoxFit.cover,
+                      color: AppColors.containercolor,
+                      border: Border.all(
+                        color: AppColors.titlecolor,
                       ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: TextFormField(
-                      controller: provider.hba1ccontroller,
-                      decoration: InputDecoration(
-                        labelText: "Enter Password",
-                        hintText: "Password",
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(15)),
-                            borderSide:
-                                BorderSide(color: AppColors.black, width: 1)),
+                    child: Form(
+                      key: provider.formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Enter Your HbA1c",
+                            maxLines: 2,
+                            style: GoogleFonts.roboto(
+                              color: AppColors.headingcolor,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          sizedBoxWithHeight(10),
+                          Text(
+                            "Enter your HbA1c (%)",
+                            style: GoogleFonts.roboto(
+                              color: AppColors.black,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          sizedBoxWithHeight(20),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: TextFormField(
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              controller: provider.hba1ccontroller,
+                              decoration: InputDecoration(
+                                hintText: "Enter HbA1c value",
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: const BorderSide(
+                                      color: AppColors.titlecolor, width: 1),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.titlecolor, width: 1)),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter a value';
+                                }
+                                final parsed = double.tryParse(value);
+                                if (parsed == null) {
+                                  return 'Enter a valid number';
+                                }
+                                if (parsed < 3.5 || parsed > 15.0) {
+                                  return 'Enter a realistic HbA1c value (3.5-15)';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          sizedBoxWithHeight(20),
+                          Text(
+                            "HbA1c is usually shown as a percentage on your blood test. Range: 4-14%",
+                            maxLines: 2,
+                            style: GoogleFonts.roboto(
+                              color: AppColors.black,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          sizedBoxWithHeight(20),
+                          Buttons(
+                              subject: "Convert",
+                              ontap: () {
+                                if (provider.formKey.currentState!.validate()) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          HbA1cConverterScreen3(
+                                        hba1cValue: double.parse(provider
+                                            .hba1ccontroller.text
+                                            .trim()),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          ]),
+                ]),
+          ),
         ));
   }
 }
