@@ -5,7 +5,6 @@ import 'package:hba1c_converter/helpers/screen_config.dart';
 import 'package:hba1c_converter/helpers/size_extensions.dart';
 import 'package:hba1c_converter/helpers/sizedbox.dart';
 import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/controller/hba1c_converter_controller.dart';
-import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/screens/hba1c_converter_screen1.dart';
 import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/screens/hba1c_converter_screen3.dart';
 import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/widgets/buttons.dart';
 import 'package:provider/provider.dart';
@@ -29,11 +28,6 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
-              // Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => const HbA1cConverterScreen1(),
-              //     ));
             },
             icon: const Icon(
               Icons.arrow_back_ios_new,
@@ -107,46 +101,51 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
                               color: AppColors.white,
                               borderRadius: BorderRadius.circular(25),
                             ),
-                            child: TextFormField(
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                              controller: provider.hba1ccontroller,
-                              decoration: InputDecoration(
-                                hintText: "Enter HbA1c value",
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: const BorderSide(
-                                      color: AppColors.titlecolor, width: 1),
+                            child: Center(
+                              child: TextFormField(
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true),
+                                controller: provider.hba1ccontroller,
+                                textAlign: TextAlign.center,
+                                decoration: InputDecoration(
+                                  hintText: "(e.g., 6.0)",
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.titlecolor, width: 1),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.titlecolor,
+                                          width: 1)),
+                                  errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.red, width: 1)),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                    borderSide: const BorderSide(
-                                        color: AppColors.titlecolor, width: 1)),
-                                errorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                    borderSide: const BorderSide(
-                                        color: AppColors.red, width: 1)),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter a value';
+                                  }
+                                  final parsed = double.tryParse(value);
+                                  if (parsed == null) {
+                                    return 'Enter a valid number';
+                                  }
+                                  if (parsed < 3.5 || parsed > 15.0) {
+                                    return 'Enter a realistic HbA1c value (3.5-15%)';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter a value';
-                                }
-                                final parsed = double.tryParse(value);
-                                if (parsed == null) {
-                                  return 'Enter a valid number';
-                                }
-                                if (parsed < 3.5 || parsed > 15.0) {
-                                  return 'Enter a realistic HbA1c value (3.5-15)';
-                                }
-                                return null;
-                              },
                             ),
                           ),
                           sizedBoxWithHeight(20),
                           Text(
                             "HbA1c is usually shown as a percentage on your blood test. Range: 4-14%",
                             maxLines: 2,
+                            textAlign: TextAlign.center,
                             style: GoogleFonts.roboto(
                               color: AppColors.black,
                               fontSize: 12.sp,
@@ -158,14 +157,19 @@ class _HbA1cConverterScreen2State extends State<HbA1cConverterScreen2> {
                               subject: "Convert",
                               ontap: () {
                                 if (provider.formKey.currentState!.validate()) {
+                                  double hba1cValue = double.parse(
+                                      provider.hba1ccontroller.text.trim());
+
+                                  // Calculate the conversion result
+                                  Map<String, dynamic> result =
+                                      provider.convertHbA1c(hba1cValue);
+
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           HbA1cConverterScreen3(
-                                        hba1cValue: double.parse(provider
-                                            .hba1ccontroller.text
-                                            .trim()),
+                                        conversionResult: result,
                                       ),
                                     ),
                                   );

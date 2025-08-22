@@ -12,24 +12,34 @@ import 'package:hba1c_converter/screen/HbA1c_converter_dashboard/widgets/glucose
 import 'package:provider/provider.dart';
 
 class HbA1cConverterScreen3 extends StatefulWidget {
-  final double hba1cValue;
-  const HbA1cConverterScreen3({super.key, required this.hba1cValue});
+  final Map<String, dynamic> conversionResult;
+  const HbA1cConverterScreen3({super.key, required this.conversionResult});
 
   @override
   State<HbA1cConverterScreen3> createState() => _HbA1cConverterScreen3State();
 }
 
 class _HbA1cConverterScreen3State extends State<HbA1cConverterScreen3> {
+  bool showMmol = false; // Toggle between mg/dL and mmol/L
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<Hba1cConverterController>();
     ScreenUtil.getInstance().init(context);
+
+    // Extract values from conversion result
+    double eAGmg = widget.conversionResult['eAGmg'];
+    double eAGmmol = widget.conversionResult['eAGmmol'];
+
+    double hba1cValue = widget.conversionResult['hba1cValue'];
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.white,
           surfaceTintColor: AppColors.white,
           leading: IconButton(
             onPressed: () {
+              provider.hba1ccontroller.clear();
               Navigator.pop(context);
             },
             icon: const Icon(
@@ -81,6 +91,7 @@ class _HbA1cConverterScreen3State extends State<HbA1cConverterScreen3> {
                         Text(
                           "Your Estimated Average Glucose (eAG)",
                           maxLines: 2,
+                          textAlign: TextAlign.center,
                           style: GoogleFonts.roboto(
                             color: AppColors.headingcolor,
                             fontSize: 16.sp,
@@ -88,18 +99,20 @@ class _HbA1cConverterScreen3State extends State<HbA1cConverterScreen3> {
                           ),
                         ),
                         sizedBoxWithHeight(20),
+                        // Display glucose value with unit
                         Text(
-                          "125 mg/dL",
-                          maxLines: 2,
+                          showMmol
+                              ? "${eAGmmol.toStringAsFixed(1)} mmol/L"
+                              : "${eAGmg.toStringAsFixed(1)} mg/dL",
                           style: GoogleFonts.roboto(
                             color: AppColors.headingcolor,
                             fontSize: 30.sp,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        sizedBoxWithHeight(20),
+                        sizedBoxWithHeight(10),
                         Text(
-                          "Based on an HbA1c of 6.0%",
+                          "Based on an HbA1c of ${hba1cValue.toStringAsFixed(1)}%",
                           style: GoogleFonts.roboto(
                             color: AppColors.black,
                             fontSize: 12.sp,
@@ -107,22 +120,24 @@ class _HbA1cConverterScreen3State extends State<HbA1cConverterScreen3> {
                           ),
                         ),
                         sizedBoxWithHeight(20),
-                        //  utilize the percentage bar
-                        const GlucoseRangeBar(
-                            glucoseValue: 120), //change as backend
+
+                        // Use the glucose range bar with actual calculated value
+                        GlucoseRangeBar(glucoseValue: eAGmg),
+
                         sizedBoxWithHeight(20),
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             color: AppColors.containercolor,
                             border: Border.all(
-                              color: AppColors.titlecolor,
+                              color: AppColors.green,
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            "Your HbA1c level corresponds to an average daily glucose of 125 mg/dL. This is in the prediabetic range. Let's work together to improve it.",
-                            maxLines: 3,
+                            "Your HbA1c level corresponds to an average daily glucose of ${showMmol ? "${eAGmmol.toStringAsFixed(1)} mmol/L" : "${eAGmg.toStringAsFixed(1)} mg/dL"}. This is in the prediabetic range. Let's work together to improve it.",
+                            maxLines: 4,
+                            textAlign: TextAlign.center,
                             style: GoogleFonts.roboto(
                               color: AppColors.black,
                               fontSize: 12.sp,
@@ -133,14 +148,7 @@ class _HbA1cConverterScreen3State extends State<HbA1cConverterScreen3> {
                         sizedBoxWithHeight(20),
                         Buttons(
                             subject: "Track My Glucose Over Time",
-                            ontap: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const HbA1cConverterScreen2(),
-                                  ));
-                            }),
+                            ontap: () {}),
                         sizedBoxWithHeight(20),
                         GlucosescreenButtons(
                             subject: "See What I Can Do", ontap: () {}),
@@ -149,7 +157,17 @@ class _HbA1cConverterScreen3State extends State<HbA1cConverterScreen3> {
                             subject: "Talk To A Doctor", ontap: () {}),
                         sizedBoxWithHeight(20),
                         GlucosescreenButtons(
-                            subject: "Recalculate", ontap: () {}),
+                            subject: "Recalculate",
+                            ontap: () {
+                              // Clear the input field and go back to input screen
+                              provider.hba1ccontroller.clear();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const HbA1cConverterScreen2(),
+                                  ));
+                            }),
                       ],
                     ),
                   ),
